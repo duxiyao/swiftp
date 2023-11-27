@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.UriPermission;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.documentfile.provider.DocumentFile;
 
 import org.jetbrains.annotations.Nullable;
@@ -259,7 +261,7 @@ public abstract class FileUtil {
                 return false;
             }
             try {
-                if((DocumentsContract.renameDocument(context.getContentResolver(), document.getUri(),
+                if ((DocumentsContract.renameDocument(context.getContentResolver(), document.getUri(),
                         target.getName()) != null)) {
                     return true;
                 }
@@ -1004,7 +1006,7 @@ public abstract class FileUtil {
      */
     public static DocumentFile customFindFile(Uri dirUri, @Nullable String filename, TYPE type, String clientPath) {
         ContentResolver contentResolver = App.getAppContext().getContentResolver();
-        Uri uri = DocumentsContract.buildChildDocumentsUriUsingTree(dirUri,DocumentsContract
+        Uri uri = DocumentsContract.buildChildDocumentsUriUsingTree(dirUri, DocumentsContract
                 .getTreeDocumentId(dirUri));
         DocumentFile f = null;
         List<Uri> uriList = new LinkedList<>();
@@ -1032,7 +1034,7 @@ public abstract class FileUtil {
                             DocumentsContract.Document.COLUMN_DISPLAY_NAME,
                             DocumentsContract.Document.COLUMN_MIME_TYPE},
                     null, null, null)) {
-                while (c!= null && c.moveToNext()) {
+                while (c != null && c.moveToNext()) {
                     final String docId = c.getString(0);
                     final String name = c.getString(1);
                     final String mime = c.getString(2);
@@ -1182,14 +1184,16 @@ public abstract class FileUtil {
     /**
      * Returns the client path or empty if at chroot from any of the supplied values.
      * At the very least:
+     *
      * @param s must be supplied which is the full path of the current dir.
-     * */
+     */
     public static String getScopedClientPath(String s, @Nullable File f, @Nullable String t) {
         if (s == null || s.isEmpty()) return ""; // at root
         String tree;
         if (t != null) tree = t;
         else tree = FileUtil.cleanupUriStoragePath(FileUtil.getTreeUri());
-        if (tree.contains(File.pathSeparator)) tree = tree.substring(tree.indexOf(File.pathSeparator) + 1);
+        if (tree.contains(File.pathSeparator))
+            tree = tree.substring(tree.indexOf(File.pathSeparator) + 1);
         String param;
         if (f != null) param = f.toString();
         else param = s;
@@ -1279,4 +1283,27 @@ public abstract class FileUtil {
             return FileUtil.convertFileToGen(f);
         }
     }
+
+
+    public static void install(File apkFile) {
+        Context context = App.getAppContext();
+        File apk = apkFile;
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            //注意第二个参数，要保持和manifest中android:authorities的值相同
+            Uri uri = FileProvider.getUriForFile(context,
+                    context.getPackageName() + ".fileProvider", apk);
+            intent.setDataAndType(uri, "application/vnd.android.package-archive");
+        } else {
+            intent.setDataAndType(Uri.fromFile(apk), "application/vnd.android.package-archive");
+        }
+        try {
+            context.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

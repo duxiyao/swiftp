@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!--   在解释上面的配置信息之前，我们先来看看一个 APK 在运行过程中可以使用的存储位置，或者说常用的存储路径。它们通常有以下五种：
+    1、程序安装目录下的 cache 目录，即 /data 目录对应包名下的 cache 目录；
+    2、程序安装目录下的 files 目录，同样是 /data 目录对应包名下的 files 目录；
+    3、sdcard 目录；
+    4、sdcard 目录下对应包名的专属目录下的 cache 目录；
+    5、sdcard 目录下对应包名的专属目录下的 files 目录；
+     -->
+    <!--    其中，xml 中第 1 、第 2 个配置项信息对应于 APK 存储位置的第 3 条，即 sdcard 目录。两个配置项信息分别代表着不同子路径位置。
+    其对应的文件绝对路径为 /storage/emulated/0/data/dir1 或者 /sdcard/data/dir1-->
+    <external-path
+        name="p1"
+        path="/data/dir1/" />
+
+    <external-path
+        name="p2"
+        path="/" />
+
+    <!--    xml 中第 3 个配置项信息对应于 APK 存储位置的第 5 条，即 sdcard 下对应包名的 files 目录。
+    其对应的文件绝对路径为 /sdcard/Android/data/com.apk.demo/files/data/dir2-->
+    <external-files-path
+        name="p3"
+        path="/data/dir2" />
+
+    <!--    xml 中第 4 个配置项信息对应于 APK 存储位置的第 4 条，即 sdcard 下对应包名的 cache 目录。
+    其对应的文件绝对路径为 /sdcard/Android/data/com.apk.demo/cache/data/dir3-->
+    <external-cache-path
+        name="p4"
+        path="/data/dir3" />
+    <!--    xml 中第 5 个配置项信息对应于 APK 存储位置的第 1 条，即 /data 下应用包名下的 cache 目录。
+    其对应的文件绝对路径为 /data/user/0/com.apk.demo/cache/data 或者 /data/data/com.apk.demo/cache/data-->
+    <cache-path
+        name="p5"
+        path="/data" />
+    <!--    xml 中最后一个配置项信息对应于 APK 存储位置的第 2 条，即 /data 下应用包名下的 files 目录。
+    其对应的文件绝对路径为 /data/user/0/com.apk.demo/files/ff 或者 /data/data/com.apk.demo/files/ff-->
+    <files-path
+        name="p6"
+        path="/ff" />
+
+</paths>

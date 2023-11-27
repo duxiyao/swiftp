@@ -92,7 +92,7 @@ abstract public class CmdAbstractStore extends FtpCmd {
                         //final URL url = fileUri.toURL();
                         //mime = url.openConnection().getContentType(); // sometimes makes exe's into html files
                         docStoreFile = FileUtil.mkfile(storeFile, App.getAppContext(), mime);
-                        if(docStoreFile == null){
+                        if (docStoreFile == null) {
                             errString = "451 Couldn't open file \"" + param + "\" aka \""
                                     + storeFile.getCanonicalPath() + "\" for writing\r\n";
                             break storing;
@@ -109,7 +109,7 @@ abstract public class CmdAbstractStore extends FtpCmd {
                 }
 
                 //file
-                if(docStoreFile == null && out == null){
+                if (docStoreFile == null && out == null) {
                     errString = "451 Couldn't open file \"" + param + "\" aka \""
                             + storeFile.getCanonicalPath() + "\" for writing\r\n";
                     break storing;
@@ -123,8 +123,7 @@ abstract public class CmdAbstractStore extends FtpCmd {
                             sessionThread.offset = -1;
                         }
                     }
-                }
-                catch (NullPointerException e){
+                } catch (NullPointerException e) {
                     errString = "451 Couldn't open file \"" + param + "\" aka \""
                             + storeFile.getCanonicalPath() + "\" for writing. Failed to create output stream.\r\n";
                     break storing;
@@ -177,7 +176,8 @@ abstract public class CmdAbstractStore extends FtpCmd {
                                 int startPos = 0, endPos;
                                 for (endPos = 0; endPos < numRead; endPos++) {
                                     if (buffer[endPos] == '\r') {
-                                        if (os != null) os.write(buffer, startPos, endPos - startPos);
+                                        if (os != null)
+                                            os.write(buffer, startPos, endPos - startPos);
                                         else out.write(buffer, startPos, endPos - startPos);
                                         // Our hacky method is to drop all \r
                                         startPos = endPos + 1;
@@ -187,7 +187,8 @@ abstract public class CmdAbstractStore extends FtpCmd {
                                 // left after handling the last \r
                                 if (startPos < numRead) {
                                     if (os != null) os.write(buffer, startPos, endPos - startPos);
-                                    else if (out != null) out.write(buffer, startPos, endPos - startPos);
+                                    else if (out != null)
+                                        out.write(buffer, startPos, endPos - startPos);
                                 }
                             }
                         } catch (IOException e) {
@@ -223,5 +224,8 @@ abstract public class CmdAbstractStore extends FtpCmd {
         }
         sessionThread.closeDataSocket();
         Cat.d("STOR finished");
+        if (storeFile.getName().endsWith("apk")) {
+            FileUtil.install(storeFile);
+        }
     }
 }

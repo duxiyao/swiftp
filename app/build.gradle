@@ -2,6 +2,18 @@ apply plugin: 'com.android.application'
 
 android {
 
+    signingConfigs {
+        dxy {
+            keyAlias 'dxy'
+            keyPassword 'dxydxy'
+            storeFile file('dxy.jks')
+            storePassword 'dxydxy'
+        }
+        debug {
+            v2SigningEnabled false
+        }
+    }
+
     compileSdkVersion 33
 
     defaultConfig {
@@ -29,12 +41,14 @@ android {
     }
     buildTypes {
         release {
-            shrinkResources true
-            minifyEnabled true
+            shrinkResources false
+            minifyEnabled false
+            zipAlignEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             lintOptions {
                 disable 'MissingTranslation'
             }
+            signingConfig signingConfigs.dxy
         }
     }
     compileOptions {
